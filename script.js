@@ -5,8 +5,8 @@ const lineNotifyApi = 'https://notify-api.line.me/api/notify';
 // 設定用の定数
 const BASE_URL = 'https://www.tablecheck.com/ja/shops/gyopao/available';
 const AUTH_TOKEN = 'BkMzmdt9drvRuLa55NSl0fQKMBIjPpjPC1FYaz63n3UPonnZ6FPlHlPlJ6I2Iaut_WYif0ysxJef1rdaUNnKAg';
-const MENU_ITEM_ID = '5e257e626e731d7f95002477'; //デバッグ（おすすめプラン）用
-// const MENU_ITEM_ID = '5f1134a545306e000100422f'; //せんべろ用
+// const MENU_ITEM_ID = '5e257e626e731d7f95002477'; //デバッグ（おすすめプラン）用
+const MENU_ITEM_ID = '5f1134a545306e000100422f'; //せんべろ用
 const ADULTS_NUMBER = 2;
 const GROUP_ORDER = 'true';
 // 予約可能な時間が1つでもあったらTrueとするフラグ
@@ -38,7 +38,7 @@ function checkAvailabilityForPeriod(startDateTime, intervalMinutes, numberOfDays
 			const epochTime = Math.floor(checkTime.getTime() / 1000);
 			sendGetRequest(epochTime, dayOffset);
 			// リクエスト間のウェイト
-			Utilities.sleep(1000);
+			Utilities.sleep(100);
 			// 次のリクエストの時刻を設定
 			checkTime.setMinutes(checkTime.getMinutes() + intervalMinutes);
 		}
