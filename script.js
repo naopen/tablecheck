@@ -38,7 +38,7 @@ function checkAvailabilityForPeriod(startDateTime, intervalMinutes, numberOfDays
 			const epochTime = Math.floor(checkTime.getTime() / 1000);
 			sendGetRequest(epochTime, dayOffset);
 			// リクエスト間のウェイト
-			Utilities.sleep(100);
+			Utilities.sleep(150);
 			// 次のリクエストの時刻を設定
 			checkTime.setMinutes(checkTime.getMinutes() + intervalMinutes);
 		}
@@ -46,6 +46,7 @@ function checkAvailabilityForPeriod(startDateTime, intervalMinutes, numberOfDays
 }
 
 // GETリクエストを送信する関数
+// User-Agentは、ランダムに変える
 function sendGetRequest(epochTime, dayOffset) {
 	const params = {
 		'authenticity_token': AUTH_TOKEN,
@@ -55,11 +56,12 @@ function sendGetRequest(epochTime, dayOffset) {
 		'reservation[orders_attributes][0][is_group_order]': GROUP_ORDER
 	};
 	const queryString = Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+
 	const options = {
 		'method': 'get',
 		'muteHttpExceptions': true,
 		'headers': {
-			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3' // 例として一般的なUser-Agent
+			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36'
 		}
 	};
 
@@ -100,7 +102,7 @@ const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate() + 1); // 明日の日付を設定
 tomorrow.setHours(12, 0, 0, 0); // 明日の12時に設定
 
-const INTERVAL_MINUTES = 15; // 確認したい時間間隔を分で設定
+const INTERVAL_MINUTES = 30; // 確認したい時間間隔を分で設定
 const NUMBER_OF_DAYS = getNumberOfDays() - 1; // ここに確認したい日数を設定
 
 // メイン関数
@@ -113,6 +115,7 @@ function main() {
 	if (isAvailable) {
 		sendMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
 	} else {
-		sendMessage('【NG】せんべろは予約不可です。');
+		// 何日から何日までの予約可能状況を確認したかをメッセージで送信
+		sendMessage('【NG】' + Utilities.formatDate(tomorrow, Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'から' + Utilities.formatDate(new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + NUMBER_OF_DAYS), Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'までの予約可能状況を確認しました。予約可能な時間はありませんでした。');
 	}
 }
