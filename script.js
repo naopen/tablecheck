@@ -38,7 +38,7 @@ function checkAvailabilityForPeriod(startDateTime, intervalMinutes, numberOfDays
 			const epochTime = Math.floor(checkTime.getTime() / 1000);
 			sendGetRequest(epochTime, dayOffset);
 			// リクエスト間のウェイト
-			Utilities.sleep(150);
+			Utilities.sleep(500);
 			// 次のリクエストの時刻を設定
 			checkTime.setMinutes(checkTime.getMinutes() + intervalMinutes);
 		}
@@ -56,12 +56,34 @@ function sendGetRequest(epochTime, dayOffset) {
 		'reservation[orders_attributes][0][is_group_order]': GROUP_ORDER
 	};
 	const queryString = Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`).join('&');
+	const randomUserAgentList = [
+		// ありとあらゆるブラウザのUser-Agentをランダムに設定
+		'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.3',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 OPR/45.0.2552.898',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Edge/16.16299',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Vivaldi/1.91.867.38',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 QupZilla/2.2.6',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Otter/1.0.01',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Midori/0.5',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Maxthon/5.2.1.6000',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Lunascape/6.15.2.27564',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Iron/58.0.3050.0',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 IceDragon/19.0.1.501',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Comodo_Dragon/58.0.3029.114',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Coc_Coc/66.4.126',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 Avast_Secure_Browser/75.0.1447.81',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 360SE',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 2345Explorer/9.7.0.18837',
+		'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36 115Browser/8.7.0',
+	];
 
 	const options = {
 		'method': 'get',
 		'muteHttpExceptions': true,
 		'headers': {
-			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/' + Math.floor(Math.random() * 100) + '.0.0.0 Safari/537.36'
+			'User-Agent': randomUserAgentList[Math.floor(Math.random() * randomUserAgentList.length)]
 		}
 	};
 
@@ -108,7 +130,7 @@ const NUMBER_OF_DAYS = getNumberOfDays() - 1; // ここに確認したい日数�
 // メイン関数
 function main() {
 	// メッセージを送信
-	sendMessage('只今より、せんべろチェックを開始します。');
+	// sendMessage('只今より、せんべろチェックを開始します。');
 	// 予約可能状況を確認
 	checkAvailabilityForPeriod(tomorrow, INTERVAL_MINUTES, NUMBER_OF_DAYS);
 	// 予約可能な時間が1つでもあったらメッセージを送信
