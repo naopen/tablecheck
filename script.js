@@ -1,5 +1,6 @@
 // 以下のコードは全てGoogle Apps Scriptで実行する
 const lineNotifyToken = 'LINE Notifyのアクセストークンを入力';
+const discordWebhookUrl = 'DiscordのWebhook URLを入力';
 const lineNotifyApi = 'https://notify-api.line.me/api/notify';
 
 // 設定用の定数
@@ -13,7 +14,7 @@ const GROUP_ORDER = 'true';
 let isAvailable = false;
 
 // メッセージを送信する関数
-function sendMessage(message) {
+function sendLineMessage(message) {
 	// メッセージの送信設定
 	const options = {
 		"method": "post",
@@ -21,6 +22,19 @@ function sendMessage(message) {
 		"headers": { "Authorization": "Bearer " + lineNotifyToken }
 	};
 	UrlFetchApp.fetch(lineNotifyApi, options);
+}
+
+function sendDiscordMessage(message) {
+	const url = discordWebhookUrl;
+	const data = {
+		'content': message
+	};
+	const options = {
+		'method': 'post',
+		'contentType': 'application/json',
+		'payload': JSON.stringify(data)
+	};
+	UrlFetchApp.fetch(url, options);
 }
 
 
@@ -38,7 +52,7 @@ function checkAvailabilityForPeriod(startDateTime, intervalMinutes, numberOfDays
 			const epochTime = Math.floor(checkTime.getTime() / 1000);
 			sendGetRequest(epochTime, dayOffset);
 			// リクエスト間のウェイト
-			Utilities.sleep(700);
+			Utilities.sleep(1000);
 			// 次のリクエストの時刻を設定
 			checkTime.setMinutes(checkTime.getMinutes() + intervalMinutes);
 		}
@@ -101,7 +115,8 @@ function sendGetRequest(epochTime, dayOffset) {
 
 	if (content.status === "success") {
 		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
-		sendMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
+		sendLineMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
+		sendDiscordMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
 		isAvailable = true;
 	} else {
 		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約不可です。");
@@ -130,14 +145,15 @@ const NUMBER_OF_DAYS = getNumberOfDays() - 1; // ここに確認したい日数�
 // メイン関数
 function main() {
 	// メッセージを送信
-	// sendMessage('只今より、せんべろチェックを開始します。');
+	// sendDiscordMessage('只今より、せんべろチェックを開始します。');
 	// 予約可能状況を確認
 	checkAvailabilityForPeriod(tomorrow, INTERVAL_MINUTES, NUMBER_OF_DAYS);
 	// 予約可能な時間が1つでもあったらメッセージを送信
 	if (isAvailable) {
-		sendMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
+		// sendLineMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
+		sendDiscordMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
 	} else {
 		// 何日から何日までの予約可能状況を確認したかをメッセージで送信
-		// sendMessage('【NG】' + Utilities.formatDate(tomorrow, Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'から' + Utilities.formatDate(new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + NUMBER_OF_DAYS), Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'までの予約可能状況を確認しました。予約可能な時間はありませんでした。');
+		// sendDiscordMessage('【NG】' + Utilities.formatDate(tomorrow, Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'から' + Utilities.formatDate(new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + NUMBER_OF_DAYS), Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'までの予約可能状況を確認しました。予約可能な時間はありませんでした。');
 	}
 }
