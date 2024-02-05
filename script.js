@@ -136,7 +136,10 @@ function getNumberOfDays() {
 
 // 予約可能状況を確認する開始基準時刻と時間間隔を定義
 const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1); // 明日の日付を設定
+// 11時を過ぎていたら、明日の日付を設定
+if (tomorrow.getHours() >= 11) {
+	tomorrow.setDate(tomorrow.getDate() + 1);
+}
 tomorrow.setHours(12, 0, 0, 0); // 明日の12時に設定
 
 const INTERVAL_MINUTES = 30; // 確認したい時間間隔を分で設定
