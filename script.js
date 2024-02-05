@@ -151,7 +151,7 @@ function main() {
 	// 予約可能な時間が1つでもあったらメッセージを送信
 	if (isAvailable) {
 		// sendLineMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
-		sendDiscordMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
+		// sendDiscordMessage('【OK】予約可能な時間があります。せんべろを予約しましょう！');
 	} else {
 		// 何日から何日までの予約可能状況を確認したかをメッセージで送信
 		// sendDiscordMessage('【NG】' + Utilities.formatDate(tomorrow, Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'から' + Utilities.formatDate(new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + NUMBER_OF_DAYS), Session.getScriptTimeZone(), 'yyyy-MM-dd') + 'までの予約可能状況を確認しました。予約可能な時間はありませんでした。');
