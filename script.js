@@ -13,6 +13,9 @@ const GROUP_ORDER = 'true';
 // 予約可能な時間が1つでもあったらTrueとするフラグ
 let isAvailable = false;
 
+// 曜日のリスト
+const weekList = ['日', '月', '火', '水', '木', '金', '土'];
+
 // メッセージを送信する関数
 function sendLineMessage(message) {
 	// メッセージの送信設定
@@ -111,15 +114,16 @@ function sendGetRequest(epochTime, dayOffset) {
 
 	const content = JSON.parse(response.getContentText());
 
-	Logger.log("只今より、" + Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss') + "の予約状況を確認します。");
+	// 日付には曜日を付けてログに残す
+	Logger.log(Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd') + "（" + weekList[new Date(epochTime * 1000).getDay()] + "）" + (Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'HH:mm')) + " の予約可能状況を確認します。");
 
 	if (content.status === "success") {
-		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
-		sendLineMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
-		sendDiscordMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約可能です。");
+		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd')) + "（" + weekList[new Date(epochTime * 1000).getDay()] + "）" + (Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'HH:mm')) + " は予約可能です。");
+		sendLineMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd')) + "（" + weekList[new Date(epochTime * 1000).getDay()] + "）" + (Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'HH:mm')) + " は予約可能です。");
+		sendDiscordMessage((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd')) + "（" + weekList[new Date(epochTime * 1000).getDay()] + "）" + (Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'HH:mm')) + " は予約可能です。");
 		isAvailable = true;
 	} else {
-		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss')) + "は予約不可です。");
+		Logger.log((Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'yyyy-MM-dd')) + "（" + weekList[new Date(epochTime * 1000).getDay()] + "）" + (Utilities.formatDate(new Date(epochTime * 1000), Session.getScriptTimeZone(), 'HH:mm')) + " は予約不可です。");
 	}
 }
 
